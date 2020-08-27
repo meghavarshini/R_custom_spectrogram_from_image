@@ -12,6 +12,26 @@
 # 4) use the vector as a modulator for each sinewave carrier component
 # 5) add all the carriers 
 # 6) save as a sound
+install_load <- function (package1, ...)  {   
+  
+  # convert arguments to vector
+  packages <- c(package1, ...)
+  
+  # start loop to determine if each package is installed
+  for(package in packages){
+    
+    # if package is installed locally, load
+    if(package %in% rownames(installed.packages()))
+      do.call('library', list(package))
+    
+    # if package is not installed locally, download, then load
+    else {
+      install.packages(package)
+      do.call("library", list(package))
+    }
+  } 
+}
+
 library(tidyr)
 library(dplyr)
 library(signal)
@@ -28,7 +48,8 @@ setwd("C:\\Type\\Your\\File\\Path\\Here")
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 # Load the image
-img_m <- load.image("UMN.jpg") %>% grayscale()
+img = "WhatsApp_University_Eng.jpeg"
+img_m <- load.image(img) %>% grayscale()
 
 # carrier frequencies in the output sound
 num_channels <- 96
@@ -116,4 +137,5 @@ signals <- lapply(1:num_channels,
 full_signal <- rowSums(signals) %>% scales::rescale(., to = c(-0.99, 0.99))
 #===================================================#
 # Save that audio file!
-audio::save.wave(full_signal, "UMN_wave.wav")
+wav = paste(img,".wav",sep = "")
+audio::save.wave(full_signal, wav)
